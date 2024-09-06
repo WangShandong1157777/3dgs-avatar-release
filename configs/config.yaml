@@ -6,7 +6,7 @@ defaults:
   - rigid: skinning_field
   - non_rigid: hashgrid
   - option:
-      - iter15k
+      - iter30k
 
 hydra:
   run:
@@ -97,9 +97,9 @@ debug_from: -1
 detect_anomaly: false
 test_iterations: []
 test_interval: 2000
-save_iterations: [30000]
+save_iterations: [5000, 10000, 20000, 30000]
 seed: -1
-checkpoint_iterations: []
+checkpoint_iterations: [10000, 20000, 30000]
 start_checkpoint: null
 wandb_disable: false
 

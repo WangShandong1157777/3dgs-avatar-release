@@ -49,11 +49,13 @@ class MLP(NonRigidDeform):
 
 
     def forward(self, gaussians, iteration, camera, compute_loss=True):
+        # if iteration < 30000:#self.delay:
         if iteration < self.delay:
             deformed_gaussians = gaussians.clone()
             if self.feature_dim > 0:
                 setattr(deformed_gaussians, "non_rigid_feature", torch.zeros(gaussians.get_xyz.shape[0], self.feature_dim).cuda())
             return deformed_gaussians, {}
+        # print("hahahhahhhahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
 
         rots = camera.rots
         Jtrs = camera.Jtrs

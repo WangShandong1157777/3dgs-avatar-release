@@ -19,7 +19,7 @@ from gaussian_renderer import render
 import torchvision
 from utils.general_utils import fix_random
 from scene import GaussianModel
-
+import cv2
 from utils.general_utils import Evaluator, PSEvaluator
 
 import hydra
@@ -110,7 +110,18 @@ def test(config):
 
             rendering = render_pkg["render"]
 
+            # --- show image
+            image = rendering.permute([1, 2, 0])
+            image = image[:, :, [2, 1, 0]]
+            image = (image.clamp(0, 1) * 255).detach().cpu().numpy().astype(np.uint8)
+            cv2.imshow("rendering", image)
+            cv2.waitKey(1)
+
             gt = view.original_image[:3, :, :]
+            gt2 = gt.permute([1, 2, 0])
+            gt2 = (gt2.clamp(0,1)*255).detach().cpu().numpy().astype(np.uint8)
+            cv2.imshow("gt", gt2)
+            cv2.waitKey(0)
 
             wandb_img = [wandb.Image(rendering[None], caption='render_{}'.format(view.image_name)),
                          wandb.Image(gt[None], caption='gt_{}'.format(view.image_name))]
@@ -181,8 +192,9 @@ def main(config):
     wandb.init(
         mode="disabled" if config.wandb_disable else None,
         name=wandb_name,
-        project='gaussian-splatting-avatar-test',
-        entity='fast-avatar',
+        project= '',
+        # project='gaussian-splatting-avatar-test',
+        # entity='fast-avatar',
         dir=config.exp_dir,
         config=OmegaConf.to_container(config, resolve=True),
         settings=wandb.Settings(start_method='fork'),

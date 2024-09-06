@@ -78,12 +78,14 @@ class PeopleSnapshotDataset(Dataset):
 
 
         self.data = []
-        img_dir = os.path.join(subject_dir, 'image')
-        mask_dir = os.path.join(subject_dir, 'mask')
-        img_files = sorted(glob.glob(os.path.join(img_dir, '*.jpg')))
+        img_dir = os.path.join(subject_dir, 'images')
+        mask_dir = os.path.join(subject_dir, 'masks')
+        img_files = sorted(glob.glob(os.path.join(img_dir, '*.png')))
         mask_files = sorted(glob.glob(os.path.join(mask_dir, '*.png')))
-        img_files = img_files[frame_slice]
-        mask_files = mask_files[frame_slice]
+        # img_files = img_files[frame_slice]
+        # mask_files = mask_files[frame_slice]
+        img_files = [os.path.join(subject_dir, f'images/{frame:06d}.png') for frame in frames]
+        mask_files = [os.path.join(subject_dir, f'masks/{frame:06d}.png') for frame in frames]
 
         assert len(model_files) == len(img_files) == len(mask_files)
 
@@ -284,6 +286,12 @@ class PeopleSnapshotDataset(Dataset):
         mask = cv2.imread(mask_file, cv2.IMREAD_GRAYSCALE)
         image = cv2.undistort(image, K, dist, None)
         mask = cv2.undistort(mask, K, dist, None)
+
+        # print("img: ", img_file)
+        # print("msk: ", mask_file)
+        # cv2.imshow("img", image)
+        # cv2.imshow("msk", mask)
+        # cv2.waitKey(0)
 
         lanczos = self.cfg.get('lanczos', False)
         interpolation = cv2.INTER_LANCZOS4 if lanczos else cv2.INTER_LINEAR

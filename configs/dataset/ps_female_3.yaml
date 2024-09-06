@@ -4,11 +4,12 @@ dataset_name: ps_female_3
 
 dataset:
   name: people_snapshot
-  root_dir: "../../data/peoplesnapshot_arah-format/people_snapshot_public"
+  root_dir: "./data/PeopleSnapshot/preprocessed_for_3DGS"
   subject: female-3-casual
 
   train_frames: [ 0, 446, 4 ]
-  val_frames: [ 446, 447, 4 ]
+  val_frames: [ 446, 648, 4 ]
+#  val_frames: [ 446, 447, 4 ]
   test_frames:
     pose: [446, 648, 4]
     all: [0, 648, 1]

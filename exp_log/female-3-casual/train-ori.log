@@ -1,0 +1,337 @@
+/home/ilc/anaconda3/envs/3dgs-avatar/bin/python /home/ilc/wsd_data/github_code/3dgs-avatar-release/train.py dataset=ps_female_3 option=iter30k pose_correction=none 
+name: ${dataset_name}-${pose_name}-${rigid_name}-${non_rigid_name}-${texture_name}-${tag}
+tag: default
+model:
+  gaussian:
+    use_sh: false
+    sh_degree: 3
+    delay: 1000
+    feature_dim: 32
+  pose_correction:
+    name: none
+  deformer:
+    rigid:
+      name: skinning_field
+      distill: false
+      res: 64
+      z_ratio: 4
+      d_out: 25
+      soft_blend: 20
+      n_reg_pts: 1024
+      skinning_network:
+        otype: VanillaMLP
+        n_neurons: 128
+        n_hidden_layers: 4
+        skip_in: []
+        cond_in: []
+        multires: 0
+    non_rigid:
+      name: hashgrid
+      scale_offset: logit
+      rot_offset: mult
+      delay: 3000
+      feature_dim: ${model.texture.non_rigid_dim}
+      latent_dim: 0
+      pose_encoder:
+        num_joints: 24
+        rel_joints: false
+        dim_per_joint: 6
+        out_dim: -1
+      hashgrid:
+        n_levels: 16
+        n_features_per_level: 2
+        log2_hashmap_size: 16
+        base_resolution: 16
+        per_level_scale: 1.447269237440378
+        max_resolution: 2048
+      mlp:
+        n_neurons: 128
+        n_hidden_layers: 3
+        skip_in: []
+        cond_in:
+        - 0
+        multires: 0
+        last_layer_init: false
+  texture:
+    name: mlp
+    feature_dim: ${model.gaussian.feature_dim}
+    use_xyz: false
+    use_cov: false
+    use_normal: false
+    sh_degree: 3
+    non_rigid_dim: 16
+    latent_dim: 16
+    cano_view_dir: true
+    view_noise: 45
+    mlp:
+      n_neurons: 64
+      n_hidden_layers: 2
+      skip_in: []
+      cond_in: []
+      multires: 0
+dataset:
+  preload: true
+  train_smpl: false
+  mode: ${mode}
+  test_mode: view
+  predict_seq: 0
+  freeview: false
+  resolution: -1
+  padding: 0.1
+  white_background: false
+  data_device: cuda
+  eval: false
+  name: people_snapshot
+  root_dir: ./data/PeopleSnapshot/preprocessed_for_3DGS
+  subject: female-3-casual
+  train_frames:
+  - 0
+  - 446
+  - 4
+  val_frames:
+  - 446
+  - 648
+  - 4
+  test_frames:
+    pose:
+    - 446
+    - 648
+    - 4
+    all:
+    - 0
+    - 648
+    - 1
+  predict_frames:
+  - 0
+  - 0
+  - 1
+  img_hw:
+  - 540
+  - 540
+opt:
+  iterations: 30000
+  grad_clip: 0.1
+  position_lr_init: 0.00016
+  position_lr_final: 1.6e-06
+  position_lr_delay_mult: 0.01
+  position_lr_max_steps: 30000
+  feature_lr: 0.001
+  opacity_lr: 0.05
+  scaling_lr: 0.005
+  rotation_lr: 0.001
+  pose_correction_lr: 0.0001
+  rigid_lr: 0.0001
+  non_rigid_lr: 0.001
+  lr_ratio: 0.1
+  lambda_l1: 1.0
+  lambda_dssim: 0.0
+  lambda_perceptual: 0.01
+  mask_loss_type: l1
+  lambda_mask: 0.1
+  lambda_opacity: 0.0
+  lambda_skinning:
+  - 10
+  - 1000
+  - 0.1
+  lambda_pose: 0.0
+  lambda_aiap_xyz: 1.0
+  lambda_aiap_cov: 100.0
+  percent_dense: 0.01
+  densification_interval: 100
+  opacity_reset_interval: 3000
+  densify_from_iter: 500
+  densify_until_iter: 15000
+  densify_grad_threshold: 0.0001
+  opacity_threshold: 0.05
+  texture_lr: 0.001
+  tex_latent_lr: 0.001
+  latent_weight_decay: 0.05
+  lambda_nr_xyz: 0.0
+  lambda_nr_scale: 0.0
+  lambda_nr_rot: 0.0
+  nr_latent_lr: 0.001
+pipeline:
+  convert_SHs_python: true
+  compute_cov3D_python: true
+  debug: false
+  pose_noise: 0.1
+debug_from: -1
+detect_anomaly: false
+test_iterations: []
+test_interval: 2000
+save_iterations:
+- 5000
+- 10000
+- 20000
+- 30000
+seed: -1
+checkpoint_iterations:
+- 10000
+- 20000
+- 30000
+start_checkpoint: null
+wandb_disable: false
+mode: train
+load_ckpt: null
+evaluate: true
+clean: true
+dataset_name: ps_female_3
+pose_name: none
+texture_name: shallow_mlp
+rigid_name: mlp_field
+non_rigid_name: ingp
+
+wandb: Currently logged in as: sandonwang2023 (sandonwang2023-cas). Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.17.9 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.15.11
+wandb: Run data is saved locally in ./exp/ps_female_3-none-mlp_field-ingp-shallow_mlp-default/wandb/run-20240906_135059-xll00i3h
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run ps_female_3-none-mlp_field-ingp-shallow_mlp-default
+wandb: ⭐️ View project at https://wandb.ai/sandonwang2023-cas/3dgs-avatar-release
+wandb: 🚀 View run at https://wandb.ai/sandonwang2023-cas/3dgs-avatar-release/runs/xll00i3h
+/home/ilc/anaconda3/envs/3dgs-avatar/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and will be removed in 0.15, please use 'weights' instead.
+  warnings.warn(
+/home/ilc/anaconda3/envs/3dgs-avatar/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and will be removed in 0.15. The current behavior is equivalent to passing `weights=VGG16_Weights.IMAGENET1K_V1`. You can also use `weights=VGG16_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Optimizing ./exp/ps_female_3-none-mlp_field-ingp-shallow_mlp-default
+Setting up [LPIPS] perceptual loss: trunk [vgg], v[0.1], spatial [off]
+Loading model from: /home/ilc/anaconda3/envs/3dgs-avatar/lib/python3.8/site-packages/lpips/weights/v0.1/vgg.pth
+/home/ilc/anaconda3/envs/3dgs-avatar/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and will be removed in 0.15. The current behavior is equivalent to passing `weights=AlexNet_Weights.IMAGENET1K_V1`. You can also use `weights=AlexNet_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+
+Number of points at initialisation :  50000
+Training progress:   7%|▋         | 2000/30000 [02:48<40:20, 11.57it/s, Loss=0.0066083]
+[ITER 2000] Evaluating test: L1 0.004879719408813352 PSNR 30.68438148498535
+
+[ITER 2000] Evaluating train: L1 0.0029695596630600367 PSNR 35.731483459472656
+Training progress:  13%|█▎        | 4000/30000 [05:58<41:53, 10.34it/s, Loss=0.0054115]
+[ITER 4000] Evaluating test: L1 0.004948807779845654 PSNR 30.416873931884766
+
+[ITER 4000] Evaluating train: L1 0.003169013017957861 PSNR 34.54667663574219
+Training progress:  17%|█▋        | 5000/30000 [07:43<42:54,  9.71it/s, Loss=0.0043913]
+[ITER 5000] Saving Gaussians
+Training progress:  20%|██        | 6000/30000 [09:32<45:58,  8.70it/s, Loss=0.0047224]
+[ITER 6000] Evaluating test: L1 0.0047626601915587395 PSNR 30.67491912841797
+
+[ITER 6000] Evaluating train: L1 0.002596137389032678 PSNR 36.6097297668457
+Training progress:  20%|██        | 6080/30000 [09:46<50:09,  7.95it/s, Loss=0.0045415]wandb: Network error (SSLError), entering retry loop.
+Training progress:  20%|██        | 6120/30000 [09:50<43:48,  9.09it/s, Loss=0.0048394]wandb: Network error resolved after 0:00:12.195082, resuming normal operation.
+Training progress:  27%|██▋       | 8000/30000 [13:08<37:36,  9.75it/s, Loss=0.0041581]
+[ITER 8000] Evaluating test: L1 0.004589439566046291 PSNR 30.803850173950195
+
+[ITER 8000] Evaluating train: L1 0.0023523625621402807 PSNR 37.11507034301758
+Training progress:  33%|███▎      | 10000/30000 [16:41<32:38, 10.21it/s, Loss=0.0038518]
+[ITER 10000] Evaluating test: L1 0.004715526275628922 PSNR 30.52376937866211
+
+[ITER 10000] Evaluating train: L1 0.0022651734444397416 PSNR 37.529441833496094
+
+[ITER 10000] Saving Gaussians
+
+[ITER 10000] Saving Checkpoint
+Training progress:  40%|████      | 12000/30000 [20:07<32:34,  9.21it/s, Loss=0.0032331]
+[ITER 12000] Evaluating test: L1 0.004557589571192568 PSNR 30.739864349365234
+
+[ITER 12000] Evaluating train: L1 0.002178841820833358 PSNR 37.68030548095703
+Training progress:  47%|████▋     | 14000/30000 [23:21<25:33, 10.43it/s, Loss=0.0032660]
+[ITER 14000] Evaluating test: L1 0.004653938288124753 PSNR 30.547218322753906
+
+[ITER 14000] Evaluating train: L1 0.0020307368725876918 PSNR 38.531494140625
+Training progress:  53%|█████▎    | 16000/30000 [26:36<21:41, 10.76it/s, Loss=0.0030002]
+[ITER 16000] Evaluating test: L1 0.004660811873298942 PSNR 30.522747039794922
+
+[ITER 16000] Evaluating train: L1 0.002005618086762049 PSNR 38.49785232543945
+Training progress:  60%|██████    | 18000/30000 [29:46<18:29, 10.81it/s, Loss=0.0031994]
+[ITER 18000] Evaluating test: L1 0.004642943764908933 PSNR 30.548006057739258
+
+[ITER 18000] Evaluating train: L1 0.001924850734543394 PSNR 38.745731353759766
+Training progress:  67%|██████▋   | 20000/30000 [32:57<15:16, 10.91it/s, Loss=0.0026951]
+[ITER 20000] Evaluating test: L1 0.004587086428906403 PSNR 30.627302169799805
+
+[ITER 20000] Evaluating train: L1 0.001819304952567274 PSNR 39.259498596191406
+
+[ITER 20000] Saving Gaussians
+
+[ITER 20000] Saving Checkpoint
+Training progress:  73%|███████▎  | 22000/30000 [36:06<12:20, 10.81it/s, Loss=0.0026682]
+[ITER 22000] Evaluating test: L1 0.004589705632123 PSNR 30.612743377685547
+
+[ITER 22000] Evaluating train: L1 0.0017925449647009373 PSNR 39.408447265625
+Training progress:  80%|████████  | 24000/30000 [39:15<09:10, 10.91it/s, Loss=0.0026533]
+[ITER 24000] Evaluating test: L1 0.004607685613354631 PSNR 30.594789505004883
+
+[ITER 24000] Evaluating train: L1 0.0017573288853534243 PSNR 39.53327560424805
+Training progress:  87%|████████▋ | 26000/30000 [42:23<06:08, 10.85it/s, Loss=0.0026928]
+[ITER 26000] Evaluating test: L1 0.004654981268971574 PSNR 30.53858757019043
+
+[ITER 26000] Evaluating train: L1 0.0017633884086866271 PSNR 39.4672737121582
+Training progress:  93%|█████████▎| 28000/30000 [45:33<03:04, 10.82it/s, Loss=0.0030015]
+[ITER 28000] Evaluating test: L1 0.004605055850583548 PSNR 30.57096290588379
+
+[ITER 28000] Evaluating train: L1 0.001713085284625942 PSNR 39.73792266845703
+Training progress: 100%|██████████| 30000/30000 [48:45<00:00, 10.25it/s, Loss=0.0028507]
+
+[ITER 30000] Evaluating test: L1 0.004626553437179502 PSNR 30.557031631469727
+
+[ITER 30000] Evaluating train: L1 0.001687238310379061 PSNR 39.79075241088867
+
+[ITER 30000] Saving Gaussians
+
+[ITER 30000] Saving Checkpoint
+
+Training complete.
+wandb: Waiting for W&B process to finish... (success).
+wandb: 
+wandb: Run history:
+wandb:                      iter_time ▁▁▂▂▅▃▅▅▂█▄▅▄▄▃▄▂▂▂▃▃▄▂▂▃▁▃▃▃▃▃▃▃▃▂▃▁▃▂▃
+wandb:             loss/cov_aiap_loss █▂▂▂▂▂▁▁▂▂▂▁▂▂▂▁▁▂▁▁▁▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                   loss/l1_loss ▇█▂▂▂▃▂▂▂▂▂▁▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂▁▁▁▁
+wandb:               loss/loss_nr_rot ▁▂▂▃▄▅▆▆▆▇▇▇████████████████▇█▇▇█▇▇▇█▇▇▇
+wandb:             loss/loss_nr_scale ██▅▅▂▂▄▅▄▄▄▆▄▃▁▂▆▄▄▂▂▂▃▃▇▂▄▃▃▅▄▂▄▃▁▄▃▂▂▃
+wandb:               loss/loss_nr_xyz ▂▁▂▂▆█▄▆▇▆▆▇▇▅▅▆▄▇▆▅▄▄▅▇▄▆▄▄▇▄▇▆▅▇▄▅▄▅▅▆
+wandb:             loss/loss_skinning █▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                 loss/mask_loss ██▂▂▁▂▁▁▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:           loss/perceptual_loss █▅▂▃▂▂▁▁▃▂▂▁▂▁▂▁▁▂▂▁▁▁▂▂▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                 loss/ssim_loss ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                loss/total_loss █▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:             loss/xyz_aiap_loss █▅▂▂▂▂▁▁▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:  test/loss_viewpoint - l1_loss ▇█▅▂▄▁▃▃▃▂▂▂▃▂▂
+wandb:    test/loss_viewpoint - lpips █▆▄▃▃▂▂▂▁▁▁▁▁▁▁
+wandb:     test/loss_viewpoint - psnr ▆▁▆█▃▇▃▃▃▅▅▄▃▄▄
+wandb:     test/loss_viewpoint - ssim ▄▁▆▇▅█▆▆▅▇▇▆▅▆▅
+wandb:                   total_points ▄▃█▅▄▄▁▁▁▁▁▁▁▁▁
+wandb: train/loss_viewpoint - l1_loss ▇█▅▄▄▃▃▃▂▂▁▁▁▁▁
+wandb:   train/loss_viewpoint - lpips █▆▄▃▃▃▂▂▂▂▁▁▁▁▁
+wandb:    train/loss_viewpoint - psnr ▃▁▄▄▅▅▆▆▇▇▇████
+wandb:    train/loss_viewpoint - ssim ▂▁▄▅▅▆▇▇▇▇█████
+wandb: 
+wandb: Run summary:
+wandb:                      iter_time 84.53223
+wandb:             loss/cov_aiap_loss 0.0
+wandb:                   loss/l1_loss 0.00186
+wandb:               loss/loss_nr_rot 0.46522
+wandb:             loss/loss_nr_scale 0.01041
+wandb:               loss/loss_nr_xyz 0.00808
+wandb:             loss/loss_skinning 0.00112
+wandb:                 loss/mask_loss 0.00251
+wandb:           loss/perceptual_loss 0.06922
+wandb:                 loss/ssim_loss 0.0
+wandb:                loss/total_loss 0.003
+wandb:             loss/xyz_aiap_loss 4e-05
+wandb:  test/loss_viewpoint - l1_loss 0.00463
+wandb:    test/loss_viewpoint - lpips 0.02908
+wandb:     test/loss_viewpoint - psnr 30.55703
+wandb:     test/loss_viewpoint - ssim 0.95387
+wandb:                   total_points 47175
+wandb: train/loss_viewpoint - l1_loss 0.00169
+wandb:   train/loss_viewpoint - lpips 0.01881
+wandb:    train/loss_viewpoint - psnr 39.79075
+wandb:    train/loss_viewpoint - ssim 0.98441
+wandb: 
+wandb: 🚀 View run ps_female_3-none-mlp_field-ingp-shallow_mlp-default at: https://wandb.ai/sandonwang2023-cas/3dgs-avatar-release/runs/xll00i3h
+wandb: ️⚡ View job at https://wandb.ai/sandonwang2023-cas/3dgs-avatar-release/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjQyMDQzMjE0Ng==/version_details/v1
+wandb: Synced 6 W&B file(s), 2790 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./exp/ps_female_3-none-mlp_field-ingp-shallow_mlp-default/wandb/run-20240906_135059-xll00i3h/logs
+
+Process finished with exit code 0
+
